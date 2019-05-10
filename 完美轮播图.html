@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>完美轮播图</title>
+    <style>
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			
+			.banner {
+				position: relative;
+				width: 810px;
+				height: 320px;
+				margin: 50px auto;
+				background: grey;
+				overflow: hidden;
+			}
+			
+			.img-list {
+				list-style: none;
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 5240px;
+				height: 320px;
+			}
+			
+			.img-list li {
+				float: left;
+			}
+			
+			.banner-nav-list {
+				list-style: none;
+				position: absolute;
+				right: 100px;
+				bottom: 50px;
+			}
+			
+			.banner-nav-list li {
+				background: red;
+				float: left;
+				width: 20px;
+				height: 20px;
+				margin-right: 10px;
+				cursor: pointer;
+				text-align: center;
+			}
+			
+			.banner-nav-list li.active {
+				background: yellow;
+			}
+			
+			.banner .toLeft {
+				width: 60px;
+				height: 60px;
+				background: url(images/btn.gif);
+				position: absolute;
+				left: 30px;
+				top: 120px;
+				/*opacity: 0;*/
+			}
+			
+			.banner .toRight {
+				width: 60px;
+				height: 60px;
+				background: url(images/btn.gif) 0px 60px;
+				position: absolute;
+				right: 30px;
+				top: 120px;
+				/*opacity: 0;*/
+			}
+			
+			#arr {
+				opacity: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="banner" id="banner">
+			<ul class="img-list" id="img-list">
+				<li index="0"><img src="images/001.jpg"></li>
+				<li index="1"><img src="images/002.jpg"></li>
+				<li index="2"><img src="images/003.jpg"></li>
+				<li index="3"><img src="images/004.jpg"></li>
+				<li index="0"><img src="images/001.jpg"></li>
+			</ul>
+
+			<ul class="banner-nav-list" id="banner-nav-list">
+				<li class="active">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>
+			<div id="arr">
+				<div class="toLeft" id="toLeft"></div>
+				<div class="toRight" id="toRight"></div>
+			</div>
+		</div>
+		<script src="../../pubic.js"></script>
+		<script>
+			/*
+			 * 自动轮播
+			 */
+			var imgList = document.getElementById("img-list");
+			var navList = document.getElementById("banner-nav-list");
+			var banner = document.getElementById("banner");
+			var toLeft = document.getElementById("toLeft");
+			var toRight = document.getElementById("toRight");
+			
+			var arr = document.getElementById("arr");
+			var navLi = navList.children;
+            var index = 0;
+            var timer = null;
+		    timer = setInterval(autoPlay,1000);
+			function autoPlay(){
+				if(index == 4){
+					index = 1;
+					imgList.style.left = 0;
+				}else{
+					index++;
+				}
+				for (var i = 0; i < navLi.length; i++) {
+					navLi[i].className = "";
+				}
+				animate(imgList,{left:-index*810});
+				navLi[index == 4 ? 0 : index].className = "active";
+			}
+			//移入停止轮播
+			banner.onmouseenter = function(){
+				//alert(1)
+				//让自动轮播停止
+				clearInterval(timer);
+				//显示左右按钮
+				animate(arr,{opacity:100});
+			}
+			//移出开启轮播
+			banner.onmouseleave = function(){
+				//alert(1)
+				//开启自动轮播停止
+				timer = setInterval(autoPlay,1000);
+				//隐藏左右按钮
+				animate(arr,{opacity:0});
+			}
+			//点击左右按钮手动轮播
+			toLeft.onclick = function(){
+				//index-- = 0
+				console.log(index);
+				if(index == 4){
+					index = 0;
+					//因为上index为4时，imgList本身牌-4*810的位置，所以这里要对其left置0的操作
+					imgList.style.left = 0;
+				}else if(index == 0){
+					index = 0;
+				}else{
+					index--;
+                }
+				//轮播动画 index=0
+				for (var i = 0; i < navLi.length; i++) {
+					navLi[i].className = "";
+				}
+				animate(imgList,{left:-index*810});
+				navLi[index].className = "active";
+			}
+			toRight.onclick = function(){
+				//index++
+				if(index == 4){
+					index = 1;
+					//因为上index为4时，imgList本身牌-4*810的位置，所以这里要对其left置0的操作
+					imgList.style.left = 0;
+				}else if(index == 3){
+					index = 3;
+				}else{
+					index++;
+				}
+				//轮播动画 index=0
+				for (var i = 0; i < navLi.length; i++) {
+					navLi[i].className = "";
+				}
+				animate(imgList,{left:-index*810});
+				navLi[index].className = "active";
+				
+			}
+			
+			for (var i = 0; i < navLi.length; i++) {
+				navLi[i].onmouseenter = function(){
+					for (var j = 0; j < navLi.length; j++) {
+						navLi[j].index = j;
+						navLi[j].className = "";
+					}
+					this.className = "active";
+					console.log(this.index);
+					//index要同步。
+					index = this.index;
+					animate(imgList,{left:-index*810});
+					
+				}
+			}
+			
+			
+		</script>
+	</body>
+</html>
